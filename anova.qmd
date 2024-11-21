@@ -1,0 +1,21 @@
+# ANOVA
+
+Extension of t-test for independent samples.
+
+## One-way ANOVA
+
+Use one variable => one-way.
+
+```{r}
+set.seed(123)
+
+#create data frame
+data <- data.frame(program = rep(c("A", "B", "C"), each = 30),
+                   weight_loss = c(runif(30, 0, 3),
+                                   runif(30, 0, 5),
+                                   runif(30, 1, 7)))
+boxplot(weight_loss ~ program, data = data)
+mod <- aov(weight_loss ~ program, data = data)
+summary(mod)
+```
+
