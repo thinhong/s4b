@@ -1,0 +1,37 @@
+---
+title: "samplesize"
+format: html
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+## Estimate a population mean
+
+For an i.i.d. sample $X_1, \cdots, X_n$ with population variance $\sigma^2$:
+
+$$
+\bar{X}=\frac{1}{n} \sum_{i=1}^n X_i \quad \text { has } \quad \bar{X} \sim \mathcal{N}\left(\mu, \sigma^2 / n\right)
+$$
+
+The confidence interval is:
+
+$$
+\bar{X} \pm z_{1-\alpha / 2} \frac{\sigma}{\sqrt{n}}
+$$
+
+Denote the desired half-width (absolute precision) by $d$, such that:
+
+$$
+d = z_{1-\alpha / 2} \frac{\sigma}{\sqrt{n}}
+$$
+
+After rearranging:
+
+$$
+n=\left(\frac{z_{1-\alpha / 2} \sigma}{d}\right)^2
+$$
+
+

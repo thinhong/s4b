@@ -1,0 +1,89 @@
+---
+title: "Chi-square test"
+format: html
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+## Post-hoc
+
+```{r}
+
+mat <- matrix(c(98, 298, 71, 296), nrow = 2)
+chisq.test(mat, correct = F)
+
+# load tidyverse
+library(tidyverse)
+
+# ── 1. make a 3-group × 2-outcome contingency table ────────────
+# Imagine three teaching methods and Pass / Fail results
+tbl <- tribble(
+  ~method, ~Pass, ~Fail,
+  "A",      30,     20,
+  "B",      25,     25,
+  "C",      35,     15
+)
+
+# convert to a matrix for chisq.test()
+mat <- tbl |>
+  column_to_rownames("method") |>
+  as.matrix()
+
+mat
+#>      Pass Fail
+#> A     30   20
+#> B     25   25
+#> C     35   15
+
+
+# ── 2. omnibus χ² test ──────────────────────────────────────────
+omni <- chisq.test(mat)
+omni
+#>  Pearson's Chi-squared test
+#>  X-squared = 6.67, df = 2, p-value = 0.0357  (significant → go post-hoc)
+
+
+# ── 3. post-hoc pair-wise χ² / proportion tests ────────────────
+# successes and totals per group
+pairwise <- pairwise.prop.test(
+  x      = tbl$Pass,
+  n      = tbl$Pass + tbl$Fail,
+  p.adjust.method = "holm"       # controls family-wise α
+)
+
+pairwise
+#> 
+#>  Pairwise comparison of proportions (Holm correction)
+#> 
+#>     A     B    
+#> B 0.579 -     
+#> C 0.286 0.035 *
+#> 
+#> P value adjustment method: holm
+
+# Interpretation:
+#   • A vs B  : p = 0.579  → no evidence of a difference
+#   • A vs C  : p = 0.286  → no evidence of a difference
+#   • B vs C  : p = 0.035* → groups B and C differ in pass rate
+
+```
+
+```{r}
+std_res   <- chi$stdres                         # z-scores for each cell
+raw_p     <- 2 * pnorm(-abs(std_res))           # two-sided p for each cell
+holm_p    <- p.adjust(raw_p, method = "holm")   # alpha control
+
+posthoc   <- as_tibble(
+  expand.grid(hair = rownames(df), eye = colnames(df))
+) |>
+  mutate(std_res  = as.vector(std_res),
+         p_raw    = raw_p,
+         p_holm   = holm_p,
+         sig      = p_holm < 0.05)
+
+posthoc |> arrange(p_holm) |> print(n = Inf)
+```
+

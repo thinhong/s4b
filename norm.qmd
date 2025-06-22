@@ -1,0 +1,25 @@
+---
+title: "Normality"
+format: html
+---
+
+## Q-Q plot
+
+Quantile-quantile plot (or Q-Q plot) is used to compare the shapes of distributions. A Q-Q plot has 2 axes: one is the quantile of our data, one is the quantile of a distribution. Very simple, if the quantile of our data align well with the quantile of that distribution, then we can say our data follow that distribution.
+
+
+
+```{r}
+library(tidyverse)
+
+set.seed(7)
+n_points <- 50 # sample size
+
+df <- data.frame(y = rchisq(n_points, df = 3))
+
+ggplot(df, aes(sample = y)) +
+  stat_qq(distribution = qchisq, dparams = list(300, 3)) +
+  stat_qq_line(distribution = qchisq, dparams = list(ncol(df), 3))
+
+```
+

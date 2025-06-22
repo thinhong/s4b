@@ -1,0 +1,27 @@
+---
+title: "Dictionary"
+format: html
+---
+
+Likelihood
+
+The likelihood $\mathcal{L}(\theta \mid x)$ measures how well a model $\theta$ explains observed data $x$. It is defined as the probability of obtaining $x$ given the model $\theta$ [@fisher1922].
+
+$$
+\mathcal{L}(\theta \mid x) = P(X = x \mid \theta)
+$$
+
+You are a detective. You walk into the scene and discover some clues $x$: footprints, a broken window, a half-eaten donut... For each suspect $\theta$, you ask:
+
+"If this person $\theta$ did it, what's the chance they'd leave exactly these clues $x$?"
+
+That chance is the likelihood $\mathcal{L}(\theta \mid x)$. The suspect with the highest $\mathcal{L}(\theta \mid x)$ is your prime suspect.
+
+Quantile: quantiles are the lines that divide data into equally sized groups. Percentiles are quantiles that divide the data into 100 equally sized groups
+
+The median is the 0.5 quantile or the 50th percentile.
+
+-   There is a difference between how the word quantile of defined and how it is used in practice
+-   There are many different ways to compute quantiles (the quantile function in R has 9 different methods)
+
+To get the quantile of data, use `quantile()` function.

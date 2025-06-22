@@ -1,21 +1,108 @@
 # ANOVA
 
-Extension of t-test for independent samples.
+Extension of t-test for independent samples. Compare more than 3 groups.
+
+Assumptions:
+- Independence of observations
+- The distributions of the residuals are normal
+- Equality (or "homogeneity") of variances: the variance of data in each group should be the same
+
+If these assumptions are invalid, use Kruskal-Wallis test.
+
+There are 3 classes of models used in ANOVA:
+
+- Fixed-effect models
+- Random-effects models
+- Mixed-effects models
 
 ## One-way ANOVA
 
 Use one variable => one-way.
 
 ```{r}
-set.seed(123)
+# ────────────────────────────────
+# ANOVA assumptions – simulation & visualisation
+# tidyverse / ggplot2 style
+# ────────────────────────────────
 
-#create data frame
-data <- data.frame(program = rep(c("A", "B", "C"), each = 30),
-                   weight_loss = c(runif(30, 0, 3),
-                                   runif(30, 0, 5),
-                                   runif(30, 1, 7)))
-boxplot(weight_loss ~ program, data = data)
-mod <- aov(weight_loss ~ program, data = data)
-summary(mod)
+library(tidyverse)
+
+set.seed(20250418)           # reproducible
+
+## helper to build one-way data frames -----------------------------------------
+make_data <- function(n_per_group = 40,
+                      means       = c(0, 0, 0),
+                      sds         = c(1, 1, 1),
+                      err_fun     = rnorm,
+                      id_prefix   = "good",
+                      cluster     = FALSE) {
+
+  tibble(
+    group = rep(letters[1:3], each = n_per_group),
+    cluster_id = if (cluster) rep(1:(n_per_group/2), each = 2, times = 3) else NA_integer_,
+    x = map2_dbl(group, cluster_id, ~ {
+           g <- match(.x, letters)           # 1,2,3
+           mu <- means[g]
+           sigma <- sds[g]
+           # if cluster, add shared random effect first
+           ran_eff <- if (cluster) rnorm(1, 0, 1) else 0
+           err_fun(1, mu, sigma) + ran_eff
+         })
+  ) |>
+    mutate(scenario = id_prefix,
+           resid    = x - ave(x, group))     # within‑group residuals
+}
+
+## 1. all assumptions met -------------------------------------------------------
+d_good <- make_data(id_prefix = "good")
+
+## 2. non‑normal residuals (heavy right skew) ----------------------------------
+d_skew <- make_data(err_fun = function(n, mu, sigma) {
+                      mu + sigma*rgamma(n, shape = 2, scale = 1) - 2          # skew
+                    },
+                    id_prefix = "skewed")
+
+## 3. unequal variances (group‑specific σ) --------------------------------------
+d_hetero <- make_data(sds = c(1, 3, 6), id_prefix = "hetero σ²")
+
+## 4. non‑independent data (cluster random effect) -----------------------------
+d_dep <- make_data(cluster = TRUE, id_prefix = "clustered")
+
+## bind and factor order --------------------------------------------------------
+dat <- bind_rows(d_good, d_skew, d_hetero, d_dep) |>
+       mutate(scenario = factor(scenario,
+                    levels = c("good", "skewed", "hetero σ²", "clustered")))
+
+# ── 1. QQ‑plots of residuals (normality) ───────────────────────────────────────
+p_qq <- ggplot(dat, aes(sample = resid)) +
+  stat_qq_line(colour = "grey50") +
+  stat_qq(size = 0.9, alpha = .5) +
+  facet_grid(scenario ~ group) +
+  labs(title = "Normality assumption: QQ‑plots of within‑group residuals",
+       x = "Theoretical quantiles", y = "Sample quantiles") +
+  theme_minimal()
+
+# ── 2. Boxplots of raw data (equal variances) ──────────────────────────────────
+p_var <- ggplot(dat, aes(group, x)) +
+  geom_boxplot(alpha = .7) +
+  facet_wrap(~ scenario, nrow = 1) +
+  labs(title = "Homoscedasticity: equal‑width boxes only in ‘good’ data",
+       x = NULL, y = "response") +
+  theme_minimal()
+
+# ── 3. Residuals vs cluster id (independence) ─────────────────────────────────
+p_dep <- ggplot(filter(dat, scenario == "clustered"), 
+                aes(cluster_id, resid)) +
+  geom_point(position = position_jitter(width = .1), alpha = .7) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  labs(title = "Violation of independence: residuals cluster around shared random effect",
+       x = "cluster id", y = "residual") +
+  theme_minimal()
+
+# ── print / save --------------------------------------------------------------
+print(p_qq)
+print(p_var)
+print(p_dep)
+
 ```
 

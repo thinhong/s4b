@@ -1,0 +1,22 @@
+[
+  {
+    "objectID": "samplesize.html",
+    "href": "samplesize.html",
+    "title": "1  samplesize",
+    "section": "",
+    "text": "1.1 Estimate a population mean\nFor an i.i.d. sample \\(X_1, \\cdots, X_n\\) with population variance \\(\\sigma^2\\):\n\\[\n\\bar{X}=\\frac{1}{n} \\sum_{i=1}^n X_i \\quad \\text { has } \\quad \\bar{X} \\sim \\mathcal{N}\\left(\\mu, \\sigma^2 / n\\right)\n\\]\nThe confidence interval is:\n\\[\n\\bar{X} \\pm z_{1-\\alpha / 2} \\frac{\\sigma}{\\sqrt{n}}\n\\]\nDenote the desired half-width (absolute precision) by \\(d\\), such that:\n\\[\nd = z_{1-\\alpha / 2} \\frac{\\sigma}{\\sqrt{n}}\n\\]\nAfter rearranging:\n\\[\nn=\\left(\\frac{z_{1-\\alpha / 2} \\sigma}{d}\\right)^2\n\\]",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>samplesize</span>"
+    ]
+  },
+  {
+    "objectID": "cutoff.html",
+    "href": "cutoff.html",
+    "title": "Cut-off value",
+    "section": "",
+    "text": "ROC analysis\nBayesian approach",
+    "crumbs": [
+      "Cut-off value"
+    ]
+  }
+]
