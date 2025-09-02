@@ -1,0 +1,96 @@
+---
+title: "Linear models"
+format: html
+---
+
+Design matrix $X$
+
+Each row represents an individual object, columns corresponding to the variables and their specific values for that object
+
+A regression model may be represented via matrix multiplication as
+
+$$y = X \beta + \varepsilon$$
+
+The simple linear regression model
+
+$$y_i = \underbrace{\beta_0 + \beta_1 x_i}_{X \beta} + \varepsilon_i$$
+
+This model can be represented in matrix form as
+
+$$
+\underbrace{\left[\begin{array}{l}
+y_1 \\
+y_2 \\
+y_3
+\end{array}\right]}_{y}
+=
+\underbrace{\left[\begin{array}{ll}
+1 & x_1 \\
+1 & x_2 \\
+1 & x_3
+\end{array}\right]}_{X}
+\underbrace{\left[\begin{array}{l}
+\beta_0 \\
+\beta_1 \\
+\vphantom{}
+\end{array}\right]}_{\beta}
++
+\underbrace{\left[\begin{array}{l}
+\varepsilon_1 \\
+\varepsilon_2 \\
+\varepsilon_3
+\end{array}\right]}_{\epsilon}
+$$
+
+
+```{r warning=FALSE, message=FALSE}
+library(tidyverse)
+
+df <- read.csv("data/classroom.csv")
+```
+
+Use a linear model to estimate a global intercept for `mathgain`, which is equal to the mean of the variable
+
+```{r}
+lm(mathgain ~ 1, data = df)
+mean(df$mathgain)
+```
+
+Let look at a subset of the data from `schoolid == 3`
+
+```{r}
+tmp <- df |> 
+  filter(schoolid == 3) |> 
+  mutate(
+    classid = factor(classid)
+  )
+```
+
+```{r}
+lm(mathgain ~ classid, data = tmp)
+```
+
+```{r}
+tmp |> 
+  group_by(classid) |> 
+  summarise(mean_mathgain = mean(mathgain))
+```
+
+So you can see the intercept (85.0) is the mean of `classid == 11`. The mean of `classid == 137` is 105.5, which is 85 + 20.5 (intercept + slope) from the linear model. And so on, mean of `classid == 145` is 96 which is `classid == 11` + 11 (85+11).
+
+If you want an intercept for each class, put `- 1` in the lm formula
+
+```{r}
+lm(mathgain ~ classid - 1, data = tmp)
+```
+
+By default, reference group is the first group in a factor
+
+```{r}
+lm(mathgain ~ classid + mathkind - 1, data = tmp)
+```
+
+```{r}
+lm(mathgain ~ classid * mathkind - 1, data = tmp)
+```
+

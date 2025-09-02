@@ -18,5 +18,85 @@
     "crumbs": [
       "Cut-off value"
     ]
+  },
+  {
+    "objectID": "lmer.html",
+    "href": "lmer.html",
+    "title": "2  Mixed-effects model",
+    "section": "",
+    "text": "2.1 Notation\nLinear mixed models (LMMs) are statistical models that incorporate fixed and random effects to accurately represent non-independent data structures. LMM is an alternative to analysis of variance.\nModels with both fixed and random-effects are called mixed-effect models.\n\\[y = X\\beta + Zu + \\varepsilon\\]",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Mixed-effects model</span>"
+    ]
+  },
+  {
+    "objectID": "lmer.html#random-intercept",
+    "href": "lmer.html#random-intercept",
+    "title": "2  lmer",
+    "section": "2.2 Random intercept",
+    "text": "2.2 Random intercept\nDesign matrix:\n\\[y = X\\beta + Zu + \\varepsilon\\]\n\\[\n\\left[\\begin{array}{ll}\ny_{11} \\\\\ny_{12} \\\\\ny_{13} \\\\\ny_{21} \\\\\ny_{22} \\\\\ny_{23}\n\\end{array}\\right]=\\left[\\begin{array}{ll}\n1 & x_{11} \\\\\n1 & x_{12} \\\\\n1 & x_{13} \\\\\n1 & x_{21} \\\\\n1 & x_{22} \\\\\n1 & x_{23}\n\\end{array}\\right] \\left[\\begin{array}{l}\n\\beta_0 \\\\\n\\beta_1\n\\end{array}\\right] +\n\\left[\\begin{array}{ll}\n1 & 0 \\\\\n1 & 0 \\\\\n1 & 0 \\\\\n0 & 1 \\\\\n0 & 1 \\\\\n0 & 1\n\\end{array}\\right] \\left[\\begin{array}{l}\nb_{0_1} \\\\\nb_{0_2}\n\\end{array}\\right] + \\varepsilon\n\\]\nInterpretation:\n\\[\\begin{align}\ny_{ij} &= \\beta_0 + \\beta_1 x_{ij} + b_{0_i} + \\varepsilon \\\\\n&= \\underbrace{\\beta_0 + b_{0_i}}_\\text{intercept} + \\underbrace{\\beta_1}_\\text{slope} x_{ij} + \\varepsilon\n\\end{align}\\]\n\nThe intercept for classroom 1 is \\(\\beta_0 + b_{0_1}\\)\nThe intercept for classroom 2 is \\(\\beta_0 + b_{0_2}\\)\nThe slope is \\(\\beta_1\\)",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>lmer</span>"
+    ]
+  },
+  {
+    "objectID": "lmer.html#random-slope",
+    "href": "lmer.html#random-slope",
+    "title": "2  lmer",
+    "section": "2.3 Random slope",
+    "text": "2.3 Random slope\n\\[y = X\\beta + Zu + \\varepsilon\\]\n\\[\n\\left[\\begin{array}{ll}\ny_{11} \\\\\ny_{12} \\\\\ny_{13} \\\\\ny_{21} \\\\\ny_{22} \\\\\ny_{23}\n\\end{array}\\right]=\\left[\\begin{array}{ll}\n1 & x_{11} \\\\\n1 & x_{12} \\\\\n1 & x_{13} \\\\\n1 & x_{21} \\\\\n1 & x_{22} \\\\\n1 & x_{23}\n\\end{array}\\right] \\left[\\begin{array}{l}\n\\beta_0 \\\\\n\\beta_1\n\\end{array}\\right] +\n\\left[\\begin{array}{ll}\nx_{11} & 0 \\\\\nx_{12} & 0 \\\\\nx_{13} & 0 \\\\\n0 & x_{21} \\\\\n0 & x_{22} \\\\\n0 & x_{23}\n\\end{array}\\right] \\left[\\begin{array}{l}\nb_{1_1} \\\\\nb_{1_2}\n\\end{array}\\right] + \\varepsilon\n\\]\n\\[\\begin{align}\ny_{ij} &= \\beta_0 + \\beta_1 x_{ij} + b_{1_i} x_{ij} + \\varepsilon \\\\\n&= \\underbrace{\\beta_0}_\\text{intercept} + \\underbrace{(\\beta_1 + b_{1_i})}_\\text{slope} x_{ij} + \\varepsilon\n\\end{align}\\]",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>lmer</span>"
+    ]
+  },
+  {
+    "objectID": "lmer.html#random-intercept-and-random-slope",
+    "href": "lmer.html#random-intercept-and-random-slope",
+    "title": "2  lmer",
+    "section": "2.4 Random intercept and random slope",
+    "text": "2.4 Random intercept and random slope\n\\[y = X\\beta + Zu + \\varepsilon\\]\n\\[\n\\left[\\begin{array}{ll}\ny_{11} \\\\\ny_{12} \\\\\ny_{13} \\\\\ny_{21} \\\\\ny_{22} \\\\\ny_{23}\n\\end{array}\\right]=\\left[\\begin{array}{ll}\n1 & x_{11} \\\\\n1 & x_{12} \\\\\n1 & x_{13} \\\\\n1 & x_{21} \\\\\n1 & x_{22} \\\\\n1 & x_{23}\n\\end{array}\\right] \\left[\\begin{array}{l}\n\\beta_0 \\\\\n\\beta_1\n\\end{array}\\right] +\n\\left[\\begin{array}{ll}\n1 & x_{11} & 0 & 0 \\\\\n1 & x_{12} & 0 & 0 \\\\\n1 & x_{13} & 0 & 0 \\\\\n0 & 0 & 1 & x_{21} \\\\\n0 & 0 & 1 & x_{22} \\\\\n0 & 0 & 1 & x_{23}\n\\end{array}\\right] \\left[\\begin{array}{l}\nb_{0_1} \\\\\nb_{1_1} \\\\\nb_{0_2} \\\\\nb_{1_2}\n\\end{array}\\right] + \\varepsilon\n\\]\n\\[\\begin{align}\ny_{ij} &= \\beta_0 + \\beta_1 x_{ij} + b_{0_i} + b_{1_i} x_{ij} + \\varepsilon \\\\\n&= \\underbrace{\\beta_0 + b_{0_i}}_\\text{intercept} + \\underbrace{(\\beta_1 + b_{1_i})}_\\text{slope} x_{ij} + \\varepsilon\n\\end{align}\\]\n\ndf &lt;- read.csv(\"data/classroom.csv\")",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>lmer</span>"
+    ]
+  },
+  {
+    "objectID": "lmer.html#random-effects",
+    "href": "lmer.html#random-effects",
+    "title": "2  Mixed-effects model",
+    "section": "2.3 Random effects",
+    "text": "2.3 Random effects\n\\[y \\sim \\beta_i x + \\varepsilon\\]\n\\[\\beta_i \\sim \\text{Normal}(\\mu, \\sigma)\\]\nRandom effect assumes that \\(\\beta_i\\) is drawn from \\(\\text{Normal}(\\mu, \\sigma)\\).\n\n# Random intercept\nlmer(y ~ x + (1 | random_group), data = my_data)\n\n# Random slope\nlmer(y ~ x + (random_slope | random_group), data = my_data)\n\nRandom-effect explains more variability than the fixed-effect WHY???\nslopes are being estimated for each classroom, but include a shared distribution. This shared distribution pools information from all classrooms",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Mixed-effects model</span>"
+    ]
+  },
+  {
+    "objectID": "lm.html",
+    "href": "lm.html",
+    "title": "1  Linear models",
+    "section": "",
+    "text": "Design matrix \\(X\\)\nEach row represents an individual object, columns corresponding to the variables and their specific values for that object\nA regression model may be represented via matrix multiplication as\n\\[y = X \\beta + \\varepsilon\\]\nThe simple linear regression model\n\\[y_i = \\underbrace{\\beta_0 + \\beta_1 x_i}_{X \\beta} + \\varepsilon_i\\]\nThis model can be represented in matrix form as\n\\[\n\\underbrace{\\left[\\begin{array}{l}\ny_1 \\\\\ny_2 \\\\\ny_3\n\\end{array}\\right]}_{y}\n=\n\\underbrace{\\left[\\begin{array}{ll}\n1 & x_1 \\\\\n1 & x_2 \\\\\n1 & x_3\n\\end{array}\\right]}_{X}\n\\underbrace{\\left[\\begin{array}{l}\n\\beta_0 \\\\\n\\beta_1 \\\\\n\\vphantom{}\n\\end{array}\\right]}_{\\beta}\n+\n\\underbrace{\\left[\\begin{array}{l}\n\\varepsilon_1 \\\\\n\\varepsilon_2 \\\\\n\\varepsilon_3\n\\end{array}\\right]}_{\\epsilon}\n\\]\n\nlibrary(tidyverse)\n\ndf &lt;- read.csv(\"data/classroom.csv\")\n\nUse a linear model to estimate a global intercept for mathgain, which is equal to the mean of the variable\n\nlm(mathgain ~ 1, data = df)\n\n\nCall:\nlm(formula = mathgain ~ 1, data = df)\n\nCoefficients:\n(Intercept)  \n      57.57  \n\nmean(df$mathgain)\n\n[1] 57.56639\n\n\nLet look at a subset of the data from schoolid == 3\n\ntmp &lt;- df |&gt; \n  filter(schoolid == 3) |&gt; \n  mutate(\n    classid = factor(classid)\n  )\n\n\nlm(mathgain ~ classid, data = tmp)\n\n\nCall:\nlm(formula = mathgain ~ classid, data = tmp)\n\nCoefficients:\n(Intercept)   classid137   classid145   classid228  \n       85.0         20.5         11.0        -14.0  \n\n\n\ntmp |&gt; \n  group_by(classid) |&gt; \n  summarise(mean_mathgain = mean(mathgain))\n\n\n  \n\n\n\nSo you can see the intercept (85.0) is the mean of classid == 11. The mean of classid == 137 is 105.5, which is 85 + 20.5 (intercept + slope) from the linear model. And so on, mean of classid == 145 is 96 which is classid == 11 + 11 (85+11).\nIf you want an intercept for each class, put - 1 in the lm formula\n\nlm(mathgain ~ classid - 1, data = tmp)\n\n\nCall:\nlm(formula = mathgain ~ classid - 1, data = tmp)\n\nCoefficients:\n classid11  classid137  classid145  classid228  \n      85.0       105.5        96.0        71.0  \n\n\nBy default, reference group is the first group in a factor\n\nlm(mathgain ~ classid + mathkind - 1, data = tmp)\n\n\nCall:\nlm(formula = mathgain ~ classid + mathkind - 1, data = tmp)\n\nCoefficients:\n classid11  classid137  classid145  classid228    mathkind  \n  404.1494    431.5223    435.9090    404.8938     -0.7049  \n\n\n\nlm(mathgain ~ classid * mathkind - 1, data = tmp)\n\n\nCall:\nlm(formula = mathgain ~ classid * mathkind - 1, data = tmp)\n\nCoefficients:\n          classid11           classid137           classid145  \n           187.7939             596.0303             561.1480  \n         classid228             mathkind  classid137:mathkind  \n          1376.9393              -0.2270              -0.8336  \nclassid145:mathkind  classid228:mathkind  \n            -0.7376              -2.5300",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Linear models</span>"
+    ]
+  },
+  {
+    "objectID": "lmer.html#notation",
+    "href": "lmer.html#notation",
+    "title": "2  Mixed-effects model",
+    "section": "",
+    "text": "\\(y\\) is a vector of observations\n\\(X\\) is the design matrix for the fixed effects\n\\(\\beta\\) is a vector of fixed-effect parameters\n\\(Z\\) is the design matrix for the random effects\n\\(u\\) is a vector of random-effect parameters\n\\(\\varepsilon\\) is a vector of random errors",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Mixed-effects model</span>"
+    ]
+  },
+  {
+    "objectID": "lmer.html#a-simple-example",
+    "href": "lmer.html#a-simple-example",
+    "title": "2  Mixed-effects model",
+    "section": "2.2 A simple example",
+    "text": "2.2 A simple example\nWe want to predict test score \\(y\\) from hours studied \\(x\\) in 2 classrooms \\(i \\in \\{1,2\\}\\), each classroom has 3 students \\(j \\in \\{1,2,3\\}\\).\n\n2.2.1 Random intercept\n\\[y = X\\beta + Zu + \\varepsilon\\]\n\\[\n\\left[\\begin{array}{ll}\ny_{11} \\\\\ny_{12} \\\\\ny_{13} \\\\\ny_{21} \\\\\ny_{22} \\\\\ny_{23}\n\\end{array}\\right]=\\left[\\begin{array}{ll}\n1 & x_{11} \\\\\n1 & x_{12} \\\\\n1 & x_{13} \\\\\n1 & x_{21} \\\\\n1 & x_{22} \\\\\n1 & x_{23}\n\\end{array}\\right] \\left[\\begin{array}{l}\n\\beta_0 \\\\\n\\beta_1\n\\end{array}\\right] +\n\\left[\\begin{array}{ll}\n1 & 0 \\\\\n1 & 0 \\\\\n1 & 0 \\\\\n0 & 1 \\\\\n0 & 1 \\\\\n0 & 1\n\\end{array}\\right] \\left[\\begin{array}{l}\nb_{0_1} \\\\\nb_{0_2}\n\\end{array}\\right] + \\varepsilon\n\\]\n\\[\\begin{align}\ny_{ij} &= \\beta_0 + \\beta_1 x_{ij} + b_{0_i} + \\varepsilon \\\\\n&= \\underbrace{\\beta_0 + b_{0_i}}_\\text{intercept} + \\underbrace{\\beta_1}_\\text{slope} x_{ij} + \\varepsilon\n\\end{align}\\]\n\nThe intercept for classroom 1 is \\(\\beta_0 + b_{0_1}\\)\nThe intercept for classroom 2 is \\(\\beta_0 + b_{0_2}\\)\nThe slope is \\(\\beta_1\\)\n\n\n\n2.2.2 Random slope\n\\[y = X\\beta + Zu + \\varepsilon\\]\n\\[\n\\left[\\begin{array}{ll}\ny_{11} \\\\\ny_{12} \\\\\ny_{13} \\\\\ny_{21} \\\\\ny_{22} \\\\\ny_{23}\n\\end{array}\\right]=\\left[\\begin{array}{ll}\n1 & x_{11} \\\\\n1 & x_{12} \\\\\n1 & x_{13} \\\\\n1 & x_{21} \\\\\n1 & x_{22} \\\\\n1 & x_{23}\n\\end{array}\\right] \\left[\\begin{array}{l}\n\\beta_0 \\\\\n\\beta_1\n\\end{array}\\right] +\n\\left[\\begin{array}{ll}\nx_{11} & 0 \\\\\nx_{12} & 0 \\\\\nx_{13} & 0 \\\\\n0 & x_{21} \\\\\n0 & x_{22} \\\\\n0 & x_{23}\n\\end{array}\\right] \\left[\\begin{array}{l}\nb_{1_1} \\\\\nb_{1_2}\n\\end{array}\\right] + \\varepsilon\n\\]\n\\[\\begin{align}\ny_{ij} &= \\beta_0 + \\beta_1 x_{ij} + b_{1_i} x_{ij} + \\varepsilon \\\\\n&= \\underbrace{\\beta_0}_\\text{intercept} + \\underbrace{(\\beta_1 + b_{1_i})}_\\text{slope} x_{ij} + \\varepsilon\n\\end{align}\\]\n\n\n2.2.3 Random intercept and random slope\n\\[y = X\\beta + Zu + \\varepsilon\\]\n\\[\n\\left[\\begin{array}{ll}\ny_{11} \\\\\ny_{12} \\\\\ny_{13} \\\\\ny_{21} \\\\\ny_{22} \\\\\ny_{23}\n\\end{array}\\right]=\\left[\\begin{array}{ll}\n1 & x_{11} \\\\\n1 & x_{12} \\\\\n1 & x_{13} \\\\\n1 & x_{21} \\\\\n1 & x_{22} \\\\\n1 & x_{23}\n\\end{array}\\right] \\left[\\begin{array}{l}\n\\beta_0 \\\\\n\\beta_1\n\\end{array}\\right] +\n\\left[\\begin{array}{ll}\n1 & x_{11} & 0 & 0 \\\\\n1 & x_{12} & 0 & 0 \\\\\n1 & x_{13} & 0 & 0 \\\\\n0 & 0 & 1 & x_{21} \\\\\n0 & 0 & 1 & x_{22} \\\\\n0 & 0 & 1 & x_{23}\n\\end{array}\\right] \\left[\\begin{array}{l}\nb_{0_1} \\\\\nb_{1_1} \\\\\nb_{0_2} \\\\\nb_{1_2}\n\\end{array}\\right] + \\varepsilon\n\\]\n\\[\\begin{align}\ny_{ij} &= \\beta_0 + \\beta_1 x_{ij} + b_{0_i} + b_{1_i} x_{ij} + \\varepsilon \\\\\n&= \\underbrace{\\beta_0 + b_{0_i}}_\\text{intercept} + \\underbrace{(\\beta_1 + b_{1_i})}_\\text{slope} x_{ij} + \\varepsilon\n\\end{align}\\]\n\ndf &lt;- read.csv(\"data/classroom.csv\")",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Mixed-effects model</span>"
+    ]
   }
 ]

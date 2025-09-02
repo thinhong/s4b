@@ -1,0 +1,184 @@
+---
+title: "Mixed-effects model"
+format: html
+---
+
+Linear mixed models (LMMs) are statistical models that incorporate **fixed** and **random** effects to accurately represent **non-independent** data structures. LMM is an alternative to analysis of variance.
+
+- Fixed effects are non-random and assumed to be constant for the whole population.
+- Random effects introduce statistical variability at different levels of the data hierarchy, account for the unmeasured sources of variance that affect certain groups in the data
+
+Models with both fixed and random-effects are called mixed-effect models.
+
+## Notation
+
+$$y = X\beta + Zu + \varepsilon$$
+
+- $y$ is a vector of observations
+- $X$ is the design matrix for the fixed effects
+- $\beta$ is a vector of fixed-effect parameters
+- $Z$ is the design matrix for the random effects
+- $u$ is a vector of random-effect parameters
+- $\varepsilon$ is a vector of random errors
+
+## A simple example
+
+We want to predict ***test score*** $y$ from ***hours studied*** $x$ in 2 classrooms $i \in \{1,2\}$, each classroom has 3 students $j \in \{1,2,3\}$.
+
+### Random intercept
+
+$$y = X\beta + Zu + \varepsilon$$
+
+$$
+\left[\begin{array}{ll}
+y_{11} \\
+y_{12} \\
+y_{13} \\
+y_{21} \\
+y_{22} \\
+y_{23}
+\end{array}\right]=\left[\begin{array}{ll}
+1 & x_{11} \\
+1 & x_{12} \\
+1 & x_{13} \\
+1 & x_{21} \\
+1 & x_{22} \\
+1 & x_{23}
+\end{array}\right] \left[\begin{array}{l}
+\beta_0 \\
+\beta_1
+\end{array}\right] + 
+\left[\begin{array}{ll}
+1 & 0 \\
+1 & 0 \\
+1 & 0 \\
+0 & 1 \\
+0 & 1 \\
+0 & 1
+\end{array}\right] \left[\begin{array}{l}
+b_{0_1} \\
+b_{0_2}
+\end{array}\right] + \varepsilon
+$$
+
+$$\begin{align}
+y_{ij} &= \beta_0 + \beta_1 x_{ij} + b_{0_i} + \varepsilon \\
+&= \underbrace{\beta_0 + b_{0_i}}_\text{intercept} + \underbrace{\beta_1}_\text{slope} x_{ij} + \varepsilon
+\end{align}$$
+
+- The intercept for classroom 1 is $\beta_0 + b_{0_1}$
+- The intercept for classroom 2 is $\beta_0 + b_{0_2}$
+- The slope is $\beta_1$
+
+### Random slope
+
+$$y = X\beta + Zu + \varepsilon$$
+
+$$
+\left[\begin{array}{ll}
+y_{11} \\
+y_{12} \\
+y_{13} \\
+y_{21} \\
+y_{22} \\
+y_{23}
+\end{array}\right]=\left[\begin{array}{ll}
+1 & x_{11} \\
+1 & x_{12} \\
+1 & x_{13} \\
+1 & x_{21} \\
+1 & x_{22} \\
+1 & x_{23}
+\end{array}\right] \left[\begin{array}{l}
+\beta_0 \\
+\beta_1
+\end{array}\right] + 
+\left[\begin{array}{ll}
+x_{11} & 0 \\
+x_{12} & 0 \\
+x_{13} & 0 \\
+0 & x_{21} \\
+0 & x_{22} \\
+0 & x_{23}
+\end{array}\right] \left[\begin{array}{l}
+b_{1_1} \\
+b_{1_2}
+\end{array}\right] + \varepsilon
+$$
+
+$$\begin{align}
+y_{ij} &= \beta_0 + \beta_1 x_{ij} + b_{1_i} x_{ij} + \varepsilon \\
+&= \underbrace{\beta_0}_\text{intercept} + \underbrace{(\beta_1 + b_{1_i})}_\text{slope} x_{ij} + \varepsilon
+\end{align}$$
+
+### Random intercept and random slope
+
+$$y = X\beta + Zu + \varepsilon$$
+
+$$
+\left[\begin{array}{ll}
+y_{11} \\
+y_{12} \\
+y_{13} \\
+y_{21} \\
+y_{22} \\
+y_{23}
+\end{array}\right]=\left[\begin{array}{ll}
+1 & x_{11} \\
+1 & x_{12} \\
+1 & x_{13} \\
+1 & x_{21} \\
+1 & x_{22} \\
+1 & x_{23}
+\end{array}\right] \left[\begin{array}{l}
+\beta_0 \\
+\beta_1
+\end{array}\right] + 
+\left[\begin{array}{ll}
+1 & x_{11} & 0 & 0 \\
+1 & x_{12} & 0 & 0 \\
+1 & x_{13} & 0 & 0 \\
+0 & 0 & 1 & x_{21} \\
+0 & 0 & 1 & x_{22} \\
+0 & 0 & 1 & x_{23}
+\end{array}\right] \left[\begin{array}{l}
+b_{0_1} \\
+b_{1_1} \\
+b_{0_2} \\
+b_{1_2}
+\end{array}\right] + \varepsilon
+$$
+
+$$\begin{align}
+y_{ij} &= \beta_0 + \beta_1 x_{ij} + b_{0_i} + b_{1_i} x_{ij} + \varepsilon \\
+&= \underbrace{\beta_0 + b_{0_i}}_\text{intercept} + \underbrace{(\beta_1 + b_{1_i})}_\text{slope} x_{ij} + \varepsilon
+\end{align}$$
+
+```{r, warning=FALSE, message=FALSE}
+df <- read.csv("data/classroom.csv")
+```
+
+## Random effects
+
+
+
+$$y \sim \beta_i x + \varepsilon$$
+
+$$\beta_i \sim \text{Normal}(\mu, \sigma)$$
+
+Random effect assumes that $\beta_i$ is drawn from $\text{Normal}(\mu, \sigma)$.
+
+```{r, eval=FALSE}
+# Random intercept
+lmer(y ~ x + (1 | random_group), data = my_data)
+
+# Random slope
+lmer(y ~ x + (random_slope | random_group), data = my_data)
+```
+
+Random-effect explains more variability than the fixed-effect WHY???
+
+slopes are being estimated for each classroom, but include a shared distribution. This shared distribution pools information from all classrooms
+
+
+

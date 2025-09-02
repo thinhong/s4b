@@ -14,6 +14,8 @@ book:
   date: "05/07/2024"
   chapters:
     - index.qmd
+    - lm.qmd
+    - lmer.qmd
     - samplesize.qmd
     - part: cutoff.qmd
     - references.qmd
