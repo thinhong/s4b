@@ -13,6 +13,7 @@ book:
     - index.qmd
     - lm.qmd
     - lmer.qmd
+    - inflx.qmd
     - samplesize.qmd
     - part: cutoff.qmd
     - references.qmd
