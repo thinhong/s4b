@@ -30,7 +30,7 @@ Papers mentioning "inflection point" often mean one of 4 different things:
 ### Turning point
 
 -   **What it is**: A local maximum or minimum, where slope changes from increasing to decreasing or vice-versa (1st derivative = 0)
--   **When to use it**: For non-monotonic curves, when you want to identify where the effect reaches a peak or a valley. The 1st derivative test tells you if it's a max or min
+-   **When to use it**: For non-monotonic curves (most commonly when you fit a polynomial curve), when you want to identify where the effect reaches a peak or a valley. The 1st derivative test tells you if it's a max or min
 -   **Interpretation**: At $x = x_0$, the effect reaches a peak (or valley)
 
 Let use $y = x^3 - 6x^2 + 9x$ as an example:
@@ -282,7 +282,7 @@ ggplot(df, aes(x, y)) +
 ## Breakpoint/threshold
 
 -   **What it is**: Where the relationship's slope changes in a piecewise model
--   **When to use it**: When you need an interpretable threshold with inference (estimate + CI) and potentially different effects below vs above the threshold. For example, tto find a biomarker level above which disease risk is higher [@chen2024]
+-   **When to use it**: When you need an interpretable threshold with inference (estimate + CI) and potentially different effects below vs above the threshold. For example, to find a biomarker level above which disease risk is higher [@chen2024]
 -   **Interpretation**: We estimate a change in slope at $x_0$ = 3.4 (95% CI: 2.8-4.1). Below $x_0$, each unit $x$ increases $y$ by $b_1$; above $x_0$, by $b_2$
 
 We will simulating some data where the effect of $x$ on the outcome $y$ changes slope after a certain point (let choose that point $x_0 = 45$ here).
@@ -330,7 +330,7 @@ ggplot() +
   geom_line(data = pred, aes(x = x, y = yhat)) +
   geom_ribbon(data = pred, aes(x = x, y = yhat, ymin = lower, ymax = upper), alpha = 0.3) +
   scale_y_log10() +
-  labs(y = "y") +
+  labs(y = "Odds ratio") +
   theme_classic()
 ````
 

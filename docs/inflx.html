@@ -307,7 +307,7 @@ window.Quarto = {
 <h3 data-number="3.1.2" class="anchored" data-anchor-id="turning-point"><span class="header-section-number">3.1.2</span> Turning point</h3>
 <ul>
 <li><strong>What it is</strong>: A local maximum or minimum, where slope changes from increasing to decreasing or vice-versa (1st derivative = 0)</li>
-<li><strong>When to use it</strong>: For non-monotonic curves, when you want to identify where the effect reaches a peak or a valley. The 1st derivative test tells you if it’s a max or min</li>
+<li><strong>When to use it</strong>: For non-monotonic curves (most commonly when you fit a polynomial curve), when you want to identify where the effect reaches a peak or a valley. The 1st derivative test tells you if it’s a max or min</li>
 <li><strong>Interpretation</strong>: At <span class="math inline">\(x = x_0\)</span>, the effect reaches a peak (or valley)</li>
 </ul>
 <p>Let use <span class="math inline">\(y = x^3 - 6x^2 + 9x\)</span> as an example:</p>
@@ -585,7 +585,7 @@ window.Quarto = {
 <h2 data-number="3.3" class="anchored" data-anchor-id="breakpointthreshold"><span class="header-section-number">3.3</span> Breakpoint/threshold</h2>
 <ul>
 <li><strong>What it is</strong>: Where the relationship’s slope changes in a piecewise model</li>
-<li><strong>When to use it</strong>: When you need an interpretable threshold with inference (estimate + CI) and potentially different effects below vs above the threshold. For example, tto find a biomarker level above which disease risk is higher <span class="citation" data-cites="chen2024">(<a href="references.html#ref-chen2024" role="doc-biblioref">Chen et al., 2024</a>)</span></li>
+<li><strong>When to use it</strong>: When you need an interpretable threshold with inference (estimate + CI) and potentially different effects below vs above the threshold. For example, to find a biomarker level above which disease risk is higher <span class="citation" data-cites="chen2024">(<a href="references.html#ref-chen2024" role="doc-biblioref">Chen et al., 2024</a>)</span></li>
 <li><strong>Interpretation</strong>: We estimate a change in slope at <span class="math inline">\(x_0\)</span> = 3.4 (95% CI: 2.8-4.1). Below <span class="math inline">\(x_0\)</span>, each unit <span class="math inline">\(x\)</span> increases <span class="math inline">\(y\)</span> by <span class="math inline">\(b_1\)</span>; above <span class="math inline">\(x_0\)</span>, by <span class="math inline">\(b_2\)</span></li>
 </ul>
 <p>We will simulating some data where the effect of <span class="math inline">\(x\)</span> on the outcome <span class="math inline">\(y\)</span> changes slope after a certain point (let choose that point <span class="math inline">\(x_0 = 45\)</span> here).</p>
@@ -660,7 +660,7 @@ x''        0.2757 0.1109  2.49  0.0129  </code></pre>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> pred, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> yhat)) <span class="sc">+</span></span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="at">data =</span> pred, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> yhat, <span class="at">ymin =</span> lower, <span class="at">ymax =</span> upper), <span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>() <span class="sc">+</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"y"</span>) <span class="sc">+</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Odds ratio"</span>) <span class="sc">+</span></span>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
