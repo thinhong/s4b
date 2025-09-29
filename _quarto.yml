@@ -14,6 +14,7 @@ book:
     - lm.qmd
     - lmer.qmd
     - inflx.qmd
+    - clinimp.qmd
     - samplesize.qmd
     - part: cutoff.qmd
     - references.qmd

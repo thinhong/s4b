@@ -1,0 +1,174 @@
+---
+title: "Clinical impact"
+format: html
+---
+
+## Decision curve analysis
+
+The key concept of decision curve analysis is net benefit. Net benefit is the benefit ($TP$) minus harm ($\omega FP$), using per-patient rates (meaning to divide everything to $N$):
+
+$$\text{Net benefit} = \frac{TP - \omega FP}{N}$$
+
+This is based on the concept of threshold probability $p_t$: the predicted risk predicted by the model at which we will treat (or perform intervention on) the patient.
+
+$\omega$ is the harm of treating a non-case relative to the benefit of treating a case, or so-called the odds at the threshold [@vancalster2018].
+
+$$\begin{align}
+\underbrace{p_t \times 1}_{\text {benefit if truly diseased }} &= \underbrace{\left(1-p_t\right) \times \omega}_{\text {harm if truly not diseased }} \\
+\omega &= \frac{p_t}{1 - p_t}
+\end{align}$$
+
+Intuition:
+
+- A high threshold probability $p_t$ means you want to model to be very sure, because the harm of overtreatment is very high. For example: $p_t = 0.7$ which resulted in a harm $\omega = \frac{0.7}{0.3}$.
+- A low threshold probability $p_t$ means the harm of overtreatment is low. For example: $p_t = 0.1$ which resulted in a harm $\omega = \frac{0.1}{0.9}$.
+
+Define:
+
+- $\pi$: disease prevalence in the population
+- $N$: population size
+- $TP$: true positive
+- $FP$: false positive
+
+$$\begin{align}
+Se &= \frac{TP}{\text{Disease}} \\
+\Leftrightarrow TP &= Se \times \text{Disease} = Se \times \pi \times N
+\end{align}$$
+
+$$\begin{align}
+Sp &= \frac{TN}{\text{Healthy}} = \frac{\text{Healthy} - FP}{\text{Healthy}} = 1 - \frac{FP}{\text{Healthy}} \\
+\Leftrightarrow FP &= (1 - Sp) \times \text{Healthy} = (1 - Sp) \times (1 - \pi) \times N
+\end{align}$$
+
+Now plug all these components into the net benefit formula:
+
+$$\begin{align}
+\text{Net benefit} &= \frac{TP - \omega FP}{N} \\
+&= \frac{Se \times \pi \times N - \omega \times (1 - Sp) \times (1 - \pi) \times N}{N} \\
+&= Se \times \pi - \omega \times (1 - Sp) \times (1 - \pi) \\
+&= Se \times \pi - \frac{p_t}{1 - p_t} \times (1 - Sp) \times (1 - \pi)
+\end{align}$$
+
+## Code
+
+```{r}
+
+library(tidyverse)
+library(dcurves)
+
+df_cancer_dx <-
+  read.csv(
+    file = "data/cancer.csv"
+  ) |> 
+  # assign variable labels. these labels will be carried through in the `dca()` output
+  labelled::set_variable_labels(
+    patientid = "Patient ID",
+    cancer = "Cancer Diagnosis",
+    risk_group = "Risk Group",
+    age = "Patient Age",
+    famhistory = "Family History",
+    marker = "Marker",
+    cancerpredmarker = "Prediction Model"
+  )
+
+dca_obj <- dca(cancer ~ famhistory,
+    data = df_cancer_dx,
+    thresholds = seq(0, 0.3, 0.01)
+)
+
+dca_df <- dca_obj$dca |> 
+  select(variable, threshold, net_benefit)
+
+benefit_bar_df <- function(df, bar_start = -0.02, bar_width = 0.015,
+                                 x_min = NULL, x_max = NULL,
+                                 strict = FALSE, tol = 1e-8) {
+  third <- setdiff(unique(df$variable), c("all","none"))[1]
+
+  w <- df |>
+    select(threshold, variable, net_benefit) |>
+    pivot_wider(names_from = variable, values_from = net_benefit) |>
+    arrange(threshold) |>
+    distinct(threshold, .keep_all = TRUE) |>
+    rename(a = all, n = none, f = !!third)
+
+  t <- w$threshold; a <- w$a; n <- w$n; f <- w$f
+  if (is.null(x_min)) x_min <- min(t, na.rm = TRUE)
+  if (is.null(x_max)) x_max <- max(t, na.rm = TRUE)
+
+  inter <- function(x, y1, y2) {
+    out <- numeric(0)
+    for (i in seq_len(length(x) - 1)) {
+      x0 <- x[i]; x1 <- x[i + 1]
+      if (x1 < x_min || x0 > x_max) next
+      d0 <- y1[i] - y2[i]; d1 <- y1[i + 1] - y2[i + 1]
+      if (!is.finite(d0) || !is.finite(d1)) next
+      if (d0 * d1 <= 0) {
+        denom <- (y1[i + 1] - y1[i]) - (y2[i + 1] - y2[i])
+        cand <- if (denom == 0) c(x0, x1) else x0 + (y2[i] - y1[i]) * (x1 - x0) / denom
+        out <- c(out, cand)
+      }
+    }
+    sort(unique(out[out >= x_min & out <= x_max & is.finite(out)]))
+  }
+
+  br <- sort(unique(c(x_min, inter(t,f,a), inter(t,f,n), inter(t,a,n), x_max)))
+  mids <- (br[-length(br)] + br[-1]) / 2
+  fm <- approx(t, f, xout = mids, rule = 2, ties = "ordered")$y
+  am <- approx(t, a, xout = mids, rule = 2, ties = "ordered")$y
+  nm <- approx(t, n, xout = mids, rule = 2, ties = "ordered")$y
+  comp <- if (strict) `>` else `>=`
+  win <- comp(fm, pmax(am, nm))
+
+  out <- tibble(
+    threshold_start = br[-length(br)],
+    threshold_end   = br[-1],
+    benefit         = ifelse(win, "Benefit", ""),
+    bar_start       = bar_start,
+    bar_width       = bar_width
+  ) |>
+    filter(threshold_end - threshold_start > tol) |>
+    arrange(threshold_start, threshold_end) |>
+    mutate(mergeable = benefit == lag(benefit) &
+                      (threshold_start - lag(threshold_end)) <= tol,
+           grp = cumsum(ifelse(is.na(mergeable) | !mergeable, 1L, 0L))) |>
+    group_by(grp, benefit) |>
+    summarise(threshold_start = min(threshold_start),
+              threshold_end   = max(threshold_end),
+              bar_start       = first(bar_start),
+              bar_width       = first(bar_width),
+              .groups = "drop") |>
+    select(threshold_start, threshold_end, benefit, bar_start, bar_width)
+
+  out
+}
+
+bar_df <- benefit_bar_df(dca_df)
+bar_df_lab <- bar_df |>
+  dplyr::mutate(
+    x = (threshold_start + threshold_end) / 2,   # middle of the span
+    y = bar_start - bar_width / 2,               # middle of the bar height
+    label = dplyr::na_if(benefit, "")            # "" -> NA (no text drawn)
+  )
+```
+
+```{r, warning=FALSE, message=FALSE}
+#| fig-height: 3
+#| fig-width: 5
+#| out-width: "100%"
+plot(dca_obj) +
+  coord_cartesian(ylim = c(-0.035, 0.15), expand = F) +
+  geom_rect(data = bar_df,
+            aes(xmin = threshold_start, xmax = threshold_end, ymin = bar_start - bar_width, ymax = bar_start, fill = benefit),
+            inherit.aes = FALSE, show.legend = FALSE) +
+  geom_text(
+    data = bar_df_lab,
+    aes(x = x, y = y, label = label),
+    inherit.aes = FALSE,
+    fontface = "bold", size = 3, vjust = 0.5, hjust = 0.5,
+    color = "white", check_overlap = TRUE
+  ) +
+  theme_classic()
+```
+
+The threshold range that has benefit is where the net benefit of our model larger than "Treat all" and "Treat none".
+
